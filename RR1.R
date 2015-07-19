@@ -1,5 +1,7 @@
 # setwd("~/RR1")
 # unzip("repdata-data-activity.zip")
+library(dplyr)
+library(lattice)
 activity <- read.csv("activity.csv",sep = ",", header=TRUE)
 activity$date <- as.Date(activity$date)
 totalsteps <- ddply(activity, "date", function(x) sum(x$steps))
