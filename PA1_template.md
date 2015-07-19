@@ -27,6 +27,7 @@ hist(totalsteps$V1, breaks = 6,
 ## What is mean total number of steps taken per day?
 
 ```r
+## calculate both the mean and the median total steps per day.        
 print(paste("The mean is = ", mean(totalsteps$V1, na.rm = TRUE)))
 ```
 
@@ -34,13 +35,22 @@ print(paste("The mean is = ", mean(totalsteps$V1, na.rm = TRUE)))
 ## [1] "The mean is =  10766.1886792453"
 ```
 
+```r
+print(paste("The median is = ", median(totalsteps$V1, na.rm = TRUE)))
+```
+
+```
+## [1] "The median is =  10765"
+```
+
 ## What is the average daily activity pattern?
+*Average number of steps over 5 minute intervals.
 
 
 ```r
 avgStepsInt <- aggregate(steps ~ interval, data = activity, mean, na.rm = TRUE)  
 plot(avgStepsInt, type="l",  
-        main="5 minute Interval Time Series", 
+        main="Average steps: 5 minute Interval Time Series", 
         ylab="Average number of Steps", 
         xlab="Interval", col="blue") 
 abline(v=avgStepsInt$interval[avgStepsInt$steps >= max(avgStepsInt$steps)], lty = 1, col = "red")
@@ -51,7 +61,26 @@ abline(v=avgStepsInt$interval[avgStepsInt$steps >= max(avgStepsInt$steps)], lty 
 
 ![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
 
-## Inputing missing values
+*Maximum number of steps over 5 minute intervals.
+
+
+```r
+totStepsInt <- aggregate(steps ~ interval, data = activity, max, na.rm = TRUE)  
+plot(totStepsInt, type="l",  
+     main="Maximum steps: 5 minute Interval Time Series", 
+     ylab="Maximum number of Steps", 
+     xlab="Interval", col="blue") 
+abline(v=totStepsInt$interval[totStepsInt$steps >= max(totStepsInt$steps)], lty = 1, col = "red")
+text(x = avgStepsInt$interval[totStepsInt$steps >= max(totStepsInt$steps)],y = round(max(totStepsInt$steps)),   
+     labels=paste("Max steps = ",(round(max(totStepsInt$steps)))), 
+     pos = 4, col = "red")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+ 
+     
+
+## Imputing missing values
 
 
 ```r
@@ -61,6 +90,8 @@ print(paste("Count of enties with missing values is",length(activity$steps[is.na
 ```
 ## [1] "Count of enties with missing values is 2304"
 ```
+
+* Strategy for imputing NA values - Use the mean for that 5 minute period.
 
 
 ```r
@@ -95,7 +126,7 @@ text(mean(totalsteps2$V1),5,labels="mean", pos=4, col="green")
 text(median(totalsteps2$V1),3,labels="median", pos=4, col="red")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
 # The mean total number of steps taken per day
 
@@ -128,7 +159,7 @@ library(lattice)
 xyplot(steps ~ interval | factor(day), data = totalsteps3, aspect = 1/2, type = "l")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
 
 ## The mean number of steps for weekdays and weekend:
 
@@ -142,3 +173,4 @@ aggregate(totalsteps3$steps, list(totalsteps3$day), mean)
 ## 1 weekday 35.61058
 ## 2 weekend 42.36640
 ```
+The average number of steps over the 5 minute intervals are higher on the weekend than the weekdays.

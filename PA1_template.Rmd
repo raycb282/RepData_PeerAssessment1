@@ -28,16 +28,18 @@ hist(totalsteps$V1, breaks = 6,
 
 ## What is mean total number of steps taken per day?
 ```{r}
+## calculate both the mean and the median total steps per day.        
 print(paste("The mean is = ", mean(totalsteps$V1, na.rm = TRUE)))
-
+print(paste("The median is = ", median(totalsteps$V1, na.rm = TRUE)))
 ```
 
 ## What is the average daily activity pattern?
+*Average number of steps over 5 minute intervals.
 
 ```{r}
 avgStepsInt <- aggregate(steps ~ interval, data = activity, mean, na.rm = TRUE)  
 plot(avgStepsInt, type="l",  
-        main="5 minute Interval Time Series", 
+        main="Average steps: 5 minute Interval Time Series", 
         ylab="Average number of Steps", 
         xlab="Interval", col="blue") 
 abline(v=avgStepsInt$interval[avgStepsInt$steps >= max(avgStepsInt$steps)], lty = 1, col = "red")
@@ -46,11 +48,29 @@ abline(v=avgStepsInt$interval[avgStepsInt$steps >= max(avgStepsInt$steps)], lty 
           pos = 4, col = "red")
 ```
 
-## Inputing missing values
+*Maximum number of steps over 5 minute intervals.
+
+```{r}
+totStepsInt <- aggregate(steps ~ interval, data = activity, max, na.rm = TRUE)  
+plot(totStepsInt, type="l",  
+     main="Maximum steps: 5 minute Interval Time Series", 
+     ylab="Maximum number of Steps", 
+     xlab="Interval", col="blue") 
+abline(v=totStepsInt$interval[totStepsInt$steps >= max(totStepsInt$steps)], lty = 1, col = "red")
+text(x = avgStepsInt$interval[totStepsInt$steps >= max(totStepsInt$steps)],y = round(max(totStepsInt$steps)),   
+     labels=paste("Max steps = ",(round(max(totStepsInt$steps)))), 
+     pos = 4, col = "red")
+```
+ 
+     
+
+## Imputing missing values
 
 ```{r}
 print(paste("Count of enties with missing values is",length(activity$steps[is.na(activity$steps)])))
 ```
+
+* Strategy for imputing NA values - Use the mean for that 5 minute period.
 
 ```{r}
 fillNAsteps <- function(interval) {
@@ -108,3 +128,4 @@ xyplot(steps ~ interval | factor(day), data = totalsteps3, aspect = 1/2, type = 
 ```{r}
 aggregate(totalsteps3$steps, list(totalsteps3$day), mean)
 ```
+The average number of steps over the 5 minute intervals are higher on the weekend than the weekdays.
