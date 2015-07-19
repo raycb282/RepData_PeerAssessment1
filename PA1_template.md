@@ -9,9 +9,13 @@
 library(plyr)
 library(lattice)
 
+## Reading and preprocessing the data
 activity <- read.csv("activity.csv",sep = ",", header=TRUE)
-activity$date <- as.Date(activity$date)
+activity$date <- as.Date(activity$date) ## convert date from string to date
+
 totalsteps <- ddply(activity, "date", function(x) sum(x$steps))
+
+## Histogram of the total number of steps per day
 hist(totalsteps$V1, breaks = 6,
         col = "lightblue",
         main = paste("Histogram of the total number of steps taken each day"),
@@ -49,6 +53,8 @@ print(paste("The median is = ", median(totalsteps$V1, na.rm = TRUE)))
 
 ```r
 avgStepsInt <- aggregate(steps ~ interval, data = activity, mean, na.rm = TRUE)  
+
+## time series plot of the 5-minute interval and the average number of steps taken, averaged  across all days 
 plot(avgStepsInt, type="l",  
         main="Average steps: 5 minute Interval Time Series", 
         ylab="Average number of Steps", 
@@ -66,6 +72,8 @@ abline(v=avgStepsInt$interval[avgStepsInt$steps >= max(avgStepsInt$steps)], lty 
 
 ```r
 totStepsInt <- aggregate(steps ~ interval, data = activity, max, na.rm = TRUE)  
+## time series plot of the 5-minute interval and the maximum number of steps taken, across all days 
+        
 plot(totStepsInt, type="l",  
      main="Maximum steps: 5 minute Interval Time Series", 
      ylab="Maximum number of Steps", 
@@ -84,6 +92,7 @@ text(x = avgStepsInt$interval[totStepsInt$steps >= max(totStepsInt$steps)],y = r
 
 
 ```r
+## calculate the number of step entries with NA
 print(paste("Count of enties with missing values is",length(activity$steps[is.na(activity$steps)])))
 ```
 
@@ -107,6 +116,7 @@ for (i in 1:nrow(activityAll)) {
                 count = count + 1
         }
 }
+## number of entries where NA was replaced
 print(paste("Total of", count, "NA values update."))
 ```
 
@@ -116,6 +126,8 @@ print(paste("Total of", count, "NA values update."))
 
 ```r
 totalsteps2 <- ddply(activityAll, "date", function(x) sum(x$steps))
+
+## Histogram of the toal number of steps per day
 hist(totalsteps2$V1, breaks = 6,
      col = "lightblue",
      main = paste("Histogram of the total number of steps taken each day"),
@@ -132,6 +144,7 @@ text(median(totalsteps2$V1),3,labels="median", pos=4, col="red")
 
 
 ```r
+## calculate the mean total steps per day.
 print(paste("The mean is = ", mean(totalsteps2$V1)))
 ```
 
@@ -155,7 +168,7 @@ for (i in 1:nrow(activityAll)) {
 }
 
 totalsteps3 = aggregate(steps ~ interval + day, activityAll, mean)
-library(lattice)
+## Plot the weekday and weekend steps in 2 panels
 xyplot(steps ~ interval | factor(day), data = totalsteps3, aspect = 1/2, type = "l")
 ```
 
